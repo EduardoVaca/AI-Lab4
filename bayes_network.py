@@ -10,22 +10,43 @@ class BayesNode:
     def __str__(self):
         return self.name
 
+class BayesNetwork:
+    """Class that represents a Bayes Network
+    """
+
+    def __init__(self, node_names):
+        self.nodes = [BayesNode(name) for name in node_names]
+        self.nodes_index = {node.name: i for i, node in enumerate(self.nodes)}
+
 def read_nodes():
     """Parser for reading node names
     RETURNS:
-    - list of BayesNodes created
+    - a new BayesNetwork
     """
     while True:
         current_input = input()
         if current_input == '[Nodes]':
             break
-    return [BayesNode(x) for x in input().replace(' ', '').split(',')]    
+    return BayesNetwork(input().replace(' ', '').split(','))
+
+def read_probability_tables():
+    """Parser for prob tables, it adds tables to the nodes
+    """
+    while True:
+        current_input = input()
+        if current_input == '[Probabilities]':
+            break
+    while True:
+        probability = input()
+        if probability == '':
+            break
+
 
 def main():
     """Main program
     """
-    nodes = read_nodes()
-    print(nodes)
+    bayes_net = read_nodes()
+    print(bayes_net.nodes_index)
 
 
 if __name__ == '__main__':
