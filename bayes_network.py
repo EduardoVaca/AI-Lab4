@@ -6,15 +6,18 @@ class BayesNode:
 
     def __init__(self, name):
         self.name = name
-        self.parents = []
+        self.parents = set()
         self.probabilities = {}
 
     def __str__(self):
         return self.name + '\nParents: ' + ''.join([x.name for x in self.parents]) + '\n' + str(self.probabilities)
 
+    def __hash__(self):
+        return hash(self.name)
+
     def add_probability(self, parents_cond, parents, prob):
         """Adds probability value to probability table"""
-        self.parents += [parent for parent in parents if parent not in self.parents]
+        self.parents.update(parents)
         self.probabilities[self.name+''.join(parents_cond)] = prob
         
 class BayesNetwork:
