@@ -1,6 +1,6 @@
 
 
-class BayesNode:
+class BayesNode(object):
     """Class that represents a node in the Bayes Network
     """
 
@@ -20,7 +20,7 @@ class BayesNode:
         self.parents.update(parents)
         self.probabilities[self.name+''.join(parents_cond)] = prob
         
-class BayesNetwork:
+class BayesNetwork(object):
     """Class that represents a Bayes Network
     """
 
