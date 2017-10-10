@@ -38,24 +38,14 @@ def read_nodes():
     RETURNS:
     - a new BayesNetwork
     """
-    while True:
-        current_input = input()
-        if current_input == '[Nodes]':
-            break
     return BayesNetwork(input().replace(' ', '').split(','))
 
 def read_probability_tables(bayes_net):
     """Parser for prob tables, it adds tables to the nodes
     """
-    while True:
-        current_input = input()
-        if current_input == '[Probabilities]':
-            break
-    while True:
-        probability = input()
-        if probability == '':
-            break
-        values = probability.replace(' ', '').split('=')
+    prob_count = int(input())
+    for _ in range(prob_count):          
+        values = input().replace(' ', '').split('=')
         var_assignments = values[0].split('|')
         parents_cond = [] if len(var_assignments) <= 1 else var_assignments[1].split(',')
         bayes_net.add_probability_to_node(var_assignments[0][1:], parents_cond, values[1])

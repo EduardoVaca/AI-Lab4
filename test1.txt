@@ -1,16 +1,9 @@
-# Specification file for the example 
-# in the assignment description
-# 
-
-[Nodes]
 Test, Ill
-
-[Probabilities]
+3
 +Ill = 0.001
 +Test|+Ill=0.9
 +Test|-Ill=0.5
-
-[Queries]
+7
 +Ill
 -Ill
 +Ill|+Test
