@@ -7,7 +7,7 @@ class BayesNode(object):
     def __init__(self, name):
         self.name = name
         self.parents = set()
-        self.probabilities = {}
+        self.probabilities = []
 
     def __str__(self):
         return self.name + '\nParents: ' + ''.join([x.name for x in self.parents]) + '\n' + str(self.probabilities)
@@ -18,7 +18,7 @@ class BayesNode(object):
     def add_probability(self, parents_cond, parents, prob):
         """Adds probability value to probability table"""
         self.parents.update(parents)
-        self.probabilities[self.name+''.join(parents_cond)] = prob
+        self.probabilities.append((parents_cond, prob))        
         
 class BayesNetwork(object):
     """Class that represents a Bayes Network
@@ -42,6 +42,8 @@ def read_nodes():
 
 def read_probability_tables(bayes_net):
     """Parser for prob tables, it adds tables to the nodes
+    PARAMS:
+    - bayer_net : bayes network on which probabilities will be added
     """
     prob_count = int(input())
     for _ in range(prob_count):          
@@ -49,6 +51,17 @@ def read_probability_tables(bayes_net):
         var_assignments = values[0].split('|')
         parents_cond = [] if len(var_assignments) <= 1 else var_assignments[1].split(',')
         bayes_net.add_probability_to_node(var_assignments[0][1:], parents_cond, values[1])
+
+def read_execute_queries(bayes_net):
+    """Read and execute queries to a given bayes net
+    PARAMS:
+    - bayes_net : bayes network on which queries will be made
+    """
+    queries_count = int(input())
+    for _ in range(queries_count):
+        # QUERY HERE.
+       break  
+
 
 def main():
     """Main program
