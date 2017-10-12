@@ -18,8 +18,19 @@ class BayesNode(object):
     def add_probability(self, parents_cond, parents, prob):
         """Adds probability value to probability table"""
         self.parents.update(parents)
-        self.probabilities.append((parents_cond, prob))        
-        
+        self.probabilities.append((parents_cond, prob))
+
+    def get_conditional_prob(self, possitive, nodes_names):
+        """Get conditional probability of node based on all nodes from chain rule
+        PARAMS:
+        - nodes_names : list names of the nodes
+        """
+        parents_str = [name for parent in self.parents for name in nodes_names if parent.name == name[1:]] # Find which are parents nodes names
+        for prob in self.probabilities:
+            if set(prob[0]).issubset(set(parents_str)):
+                return prob[1] if possitive else 1 - prob[1]
+        return self.probabilities[0][1] if possitive else 1 - self.probabilities[0][1] # If it doesn't have parents, return its prob
+
 class BayesNetwork(object):
     """Class that represents a Bayes Network
     """
@@ -27,11 +38,23 @@ class BayesNetwork(object):
     def __init__(self, node_names):
         self.nodes = [BayesNode(name) for name in node_names]
         self.nodes_index = {node.name: i for i, node in enumerate(self.nodes)}
+        self.nodes_set = set(self.nodes)
 
     def add_probability_to_node(self, node_name, parents_cond, prob):
         """Adds probability values to one of its nodes
         """
         self.nodes[self.nodes_index[node_name]].add_probability(parents_cond, [self.nodes[self.nodes_index[x[1:]]] for x in parents_cond], prob)
+
+    def chain_rule(self, nodes_names):
+        result = 0.0
+        for name in nodes_names:
+            current_node = self.nodes[self.nodes_index[name[1:]]]
+            result *= current_node.get_conditional_prob(name[0] == '+', nodes_names)
+        return result
+
+    # NOTE: SUM OVER ANCESTORS IN TOTAL PROB
+
+            
 
 def read_nodes():
     """Parser for reading node names
@@ -68,7 +91,8 @@ def main():
     """
     bayes_net = read_nodes()
     read_probability_tables(bayes_net)
-    print(bayes_net.nodes[0])
+    for e in bayes_net.nodes_set:
+        print(e)
 
 
 
