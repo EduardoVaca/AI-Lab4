@@ -1,4 +1,4 @@
-
+import itertools
 
 class BayesNode(object):
     """Class that represents a node in the Bayes Network
@@ -46,13 +46,47 @@ class BayesNetwork(object):
         self.nodes[self.nodes_index[node_name]].add_probability(parents_cond, [self.nodes[self.nodes_index[x[1:]]] for x in parents_cond], prob)
 
     def chain_rule(self, nodes_names):
+        """Chain rule method
+        PARAMS:
+        - nodes_names : list of node names involved in chain rule with sign (+|-)
+        RETURNS:
+        - chain rule result
+        """
         result = 0.0
         for name in nodes_names:
             current_node = self.nodes[self.nodes_index[name[1:]]]
             result *= current_node.get_conditional_prob(name[0] == '+', nodes_names)
         return result
+    
+    def get_all_combinations_total_prob(self, node_names):
+        """Find all combinatios for total probability with given nodes involved
+        PARAMS:
+        - node_names : list of names of nodes involved with sign (+|-)
+        RESULT:
+        - list of all combinations
+        """
+        original_nodes = set([name[1:] for name in node_names])
+        involved_nodes = set([name[1:] for name in node_names])
+        all_names = [name[1:] for name in node_names]        
+        # Get all involved nodes
+        for name in all_names:
+            current_node_parents = [p.name for p in self.nodes[self.nodes_index[name]].parents]
+            for parent_name in current_node_parents:
+                if parent_name not in involved_nodes:
+                    involved_nodes.add(parent_name)
+                    all_names.append(parent_name)        
+        # Get all combinations
+        combinations = []
+        joker_nodes = list(involved_nodes - original_nodes)
+        joker_combinations = [list(i) for i in itertools.product([0, 1], repeat=len(joker_nodes))]        
+        for jc in joker_combinations:
+            current_comb = list(node_names)
+            current_comb += ['+'+joker_nodes[i] if j == 1 else '-'+joker_nodes[i] for i,j in enumerate(jc)]  
+            combinations.append(current_comb)
+        return combinations      
 
     # NOTE: SUM OVER ANCESTORS IN TOTAL PROB
+    
 
             
 
@@ -83,7 +117,13 @@ def read_execute_queries(bayes_net):
     queries_count = int(input())
     for _ in range(queries_count):
         # QUERY HERE.
-       break  
+        query = input().replace(' ', '').split('|')
+        query_value, query_evidence = query[0].split(','), [] if len(query) <= 1 else query[1].split(',')
+        # demo start        
+        comb = bayes_net.get_all_combinations_total_prob(query_value + query_evidence)
+        print('---------------------')
+        for c in comb:
+            print(c) 
 
 
 def main():
@@ -91,8 +131,7 @@ def main():
     """
     bayes_net = read_nodes()
     read_probability_tables(bayes_net)
-    for e in bayes_net.nodes_set:
-        print(e)
+    read_execute_queries(bayes_net)
 
 
 
