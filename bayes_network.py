@@ -52,7 +52,7 @@ class BayesNetwork(object):
         RETURNS:
         - chain rule result
         """
-        result = 0.0
+        result = 1.0
         for name in nodes_names:
             current_node = self.nodes[self.nodes_index[name[1:]]]
             result *= current_node.get_conditional_prob(name[0] == '+', nodes_names)
@@ -68,7 +68,7 @@ class BayesNetwork(object):
         original_nodes = set([name[1:] for name in node_names])
         involved_nodes = set([name[1:] for name in node_names])
         all_names = [name[1:] for name in node_names]        
-        # Get all involved nodes
+        # Get all involved nodes (parents of parents)
         for name in all_names:
             current_node_parents = [p.name for p in self.nodes[self.nodes_index[name]].parents]
             for parent_name in current_node_parents:
@@ -83,12 +83,7 @@ class BayesNetwork(object):
             current_comb = list(node_names)
             current_comb += ['+'+joker_nodes[i] if j == 1 else '-'+joker_nodes[i] for i,j in enumerate(jc)]  
             combinations.append(current_comb)
-        return combinations      
-
-    # NOTE: SUM OVER ANCESTORS IN TOTAL PROB
-    
-
-            
+        return combinations              
 
 def read_nodes():
     """Parser for reading node names
@@ -107,10 +102,11 @@ def read_probability_tables(bayes_net):
         values = input().replace(' ', '').split('=')
         var_assignments = values[0].split('|')
         parents_cond = [] if len(var_assignments) <= 1 else var_assignments[1].split(',')
-        bayes_net.add_probability_to_node(var_assignments[0][1:], parents_cond, values[1])
+        bayes_net.add_probability_to_node(var_assignments[0][1:], parents_cond, float(values[1]))
 
 def read_execute_queries(bayes_net):
     """Read and execute queries to a given bayes net
+    Execution is based on conditional probability function
     PARAMS:
     - bayes_net : bayes network on which queries will be made
     """
@@ -120,10 +116,19 @@ def read_execute_queries(bayes_net):
         query = input().replace(' ', '').split('|')
         query_value, query_evidence = query[0].split(','), [] if len(query) <= 1 else query[1].split(',')
         # demo start        
-        comb = bayes_net.get_all_combinations_total_prob(query_value + query_evidence)
+        comb_numerators = bayes_net.get_all_combinations_total_prob(query_value + query_evidence)
+        comb_denominators = bayes_net.get_all_combinations_total_prob(query_evidence)
+        numerator = sum([bayes_net.chain_rule(x) for x in comb_numerators])
+        denominator = sum([bayes_net.chain_rule(x) for x in comb_denominators])
+        result = round(numerator/denominator, 7)
         print('---------------------')
-        for c in comb:
+        print('NUMERATORS')
+        for c in comb_numerators:
             print(c) 
+        print('DENOMINATORS')
+        for c in comb_denominators:
+            print(c) 
+        print(result)
 
 
 def main():
