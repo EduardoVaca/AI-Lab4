@@ -81,9 +81,9 @@ class BayesNetwork(object):
         joker_combinations = [list(i) for i in itertools.product([0, 1], repeat=len(joker_nodes))]        
         for jc in joker_combinations:
             current_comb = list(node_names)
-            current_comb += ['+'+joker_nodes[i] if j == 1 else '-'+joker_nodes[i] for i,j in enumerate(jc)]  
+            current_comb += ['+'+joker_nodes[i] if j == 1 else '-'+joker_nodes[i] for i, j in enumerate(jc)]
             combinations.append(current_comb)
-        return combinations              
+        return combinations
 
 def read_nodes():
     """Parser for reading node names
@@ -98,7 +98,7 @@ def read_probability_tables(bayes_net):
     - bayer_net : bayes network on which probabilities will be added
     """
     prob_count = int(input())
-    for _ in range(prob_count):          
+    for _ in range(prob_count):
         values = input().replace(' ', '').split('=')
         var_assignments = values[0].split('|')
         parents_cond = [] if len(var_assignments) <= 1 else var_assignments[1].split(',')
@@ -112,24 +112,14 @@ def read_execute_queries(bayes_net):
     """
     queries_count = int(input())
     for _ in range(queries_count):
-        # QUERY HERE.
         query = input().replace(' ', '').split('|')
-        query_value, query_evidence = query[0].split(','), [] if len(query) <= 1 else query[1].split(',')
-        # demo start        
+        query_value, query_evidence = query[0].split(','), [] if len(query) <= 1 else query[1].split(',')   
         comb_numerators = bayes_net.get_all_combinations_total_prob(query_value + query_evidence)
         comb_denominators = bayes_net.get_all_combinations_total_prob(query_evidence)
         numerator = sum([bayes_net.chain_rule(x) for x in comb_numerators])
         denominator = sum([bayes_net.chain_rule(x) for x in comb_denominators])
         result = round(numerator/denominator, 7)
-        print('---------------------')
-        print('NUMERATORS')
-        for c in comb_numerators:
-            print(c) 
-        print('DENOMINATORS')
-        for c in comb_denominators:
-            print(c) 
         print(result)
-
 
 def main():
     """Main program
@@ -138,7 +128,6 @@ def main():
     read_probability_tables(bayes_net)
     read_execute_queries(bayes_net)
 
-
-
 if __name__ == '__main__':
     main()
+    
