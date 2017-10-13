@@ -62,7 +62,7 @@ class BayesNetwork(object):
             current_node = self.nodes[self.nodes_index[name[1:]]]
             result *= current_node.get_conditional_prob(name[0] == '+', nodes_names)
         return result
-    
+
     def get_all_combinations_total_prob(self, node_names):
         """Find all combinatios for total probability with given nodes involved
         PARAMS:
@@ -72,18 +72,18 @@ class BayesNetwork(object):
         """
         original_nodes = set([name[1:] for name in node_names])
         involved_nodes = set([name[1:] for name in node_names])
-        all_names = [name[1:] for name in node_names]        
+        all_names = [name[1:] for name in node_names]
         # Get all involved nodes (parents of parents)
         for name in all_names:
             current_node_parents = [p.name for p in self.nodes[self.nodes_index[name]].parents]
             for parent_name in current_node_parents:
                 if parent_name not in involved_nodes:
                     involved_nodes.add(parent_name)
-                    all_names.append(parent_name)        
+                    all_names.append(parent_name)
         # Get all combinations
         combinations = []
         joker_nodes = list(involved_nodes - original_nodes)
-        joker_combinations = [list(i) for i in itertools.product([0, 1], repeat=len(joker_nodes))]        
+        joker_combinations = [list(i) for i in itertools.product([0, 1], repeat=len(joker_nodes))]
         for jc in joker_combinations:
             current_comb = list(node_names)
             current_comb += ['+'+joker_nodes[i] if j == 1 else '-'+joker_nodes[i] for i, j in enumerate(jc)]
@@ -118,7 +118,7 @@ def read_execute_queries(bayes_net):
     queries_count = int(input())
     for _ in range(queries_count):
         query = input().replace(' ', '').split('|')
-        query_value, query_evidence = query[0].split(','), [] if len(query) <= 1 else query[1].split(',')   
+        query_value, query_evidence = query[0].split(','), [] if len(query) <= 1 else query[1].split(',')
         comb_numerators = bayes_net.get_all_combinations_total_prob(query_value + query_evidence)
         comb_denominators = bayes_net.get_all_combinations_total_prob(query_evidence)
         numerator = sum([bayes_net.chain_rule(x) for x in comb_numerators])
