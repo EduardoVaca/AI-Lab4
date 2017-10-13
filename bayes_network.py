@@ -1,3 +1,8 @@
+"""
+LAB: Bayesian Networks
+Author: Eduardo Vaca
+A01207563
+"""
 import itertools
 
 class BayesNode(object):
