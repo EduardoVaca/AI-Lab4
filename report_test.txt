@@ -1,0 +1,23 @@
+BitcoinRise, ChinaBanICOs, ForkSoon, EthereumRise
+12
++ForkSoon=0.07
++ChinaBanICOs=0.65
++BitcoinRise|+ChinaBanICOs=0.05
++BitcoinRise|-ChinaBanICOs=0.35
++EthereumRise|+BitcoinRise,+ChinaBanICOs,+ForkSoon=0.64
++EthereumRise|+BitcoinRise,-ChinaBanICOs,+ForkSoon=0.82
++EthereumRise|-BitcoinRise,+ChinaBanICOs,+ForkSoon=0.27
++EthereumRise|+BitcoinRise,+ChinaBanICOs,-ForkSoon=0.4
++EthereumRise|-BitcoinRise,-ChinaBanICOs,+ForkSoon=0.4
++EthereumRise|-BitcoinRise,+ChinaBanICOs,-ForkSoon=0.03
++EthereumRise|+BitcoinRise,-ChinaBanICOs,-ForkSoon=0.57
++EthereumRise|-BitcoinRise,-ChinaBanICOs,-ForkSoon=0.2
+8
++EthereumRise
++EthereumRise|+ForkSoon
++EthereumRise|+BitcoinRise,+ForkSoon
++ForkSoon|+EthereumRise
++ChinaBanICOs|-EthereumRise,-BitcoinRise
++ChinaBanICOs
+-EthereumRise|+ChinaBanICOs
+-EthereumRise|+BitcoinRise
